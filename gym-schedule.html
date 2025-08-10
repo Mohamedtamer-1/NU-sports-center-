@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NU Sports Center - Gym Schedule</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            color: #fff;
+            background-color: #111;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background-color: #1e3a8a;
+            padding: 0.8rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            position: relative;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .logo-img {
+            height: 45px;
+            width: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-img:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background-color: #2563eb;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(37, 99, 235, 0.1);
+            color: #60a5fa;
+        }
+
+        .nav-link:hover::after {
+            width: 80%;
+        }
+
+        .profile-icon {
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .profile-icon:hover {
+            transform: scale(1.05);
+        }
+
+        .icon-img {
+            height: 50px;
+            width: auto;
+            transition: all 0.3s ease;
+            border-radius: 50%;
+            padding: 0.3rem;
+        }
+
+        .icon-img:hover {
+            transform: scale(1.1);
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+
+        /* Hero Section with Background Image */
+        .hero {
+            position: relative;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: brightness(0.7);
+            z-index: -1;
+            animation: zoomEffect 20s infinite alternate ease-in-out;
+        }
+
+        @keyframes zoomEffect {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.1);
+            }
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            padding: 2rem;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: translateY(-50px);
+            opacity: 0;
+            animation: fadeInUp 1s forwards 0.5s;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #60a5fa, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+
+        /* Schedule Section */
+        .schedule-section {
+            padding: 5rem 2rem;
+            background-color: #111;
+            position: relative;
+        }
+
+        .schedule-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #fff;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, #60a5fa, #2563eb);
+        }
+
+        .schedule-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 0.8rem 1.5rem;
+            background-color: #1f2937;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover {
+            background-color: #2563eb;
+            transform: translateY(-3px);
+        }
+
+        .tab-btn.active {
+            background-color: #2563eb;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .schedule-content {
+            display: none;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .schedule-content.active {
+            display: block;
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 2rem;
+            background-color: rgba(31, 41, 55, 0.7);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .schedule-table th,
+        .schedule-table td {
+            padding: 1.2rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .schedule-table th {
+            background-color: #2563eb;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .schedule-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .schedule-table tr:hover td {
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+
+        .class-name {
+            font-weight: 600;
+            color: #60a5fa;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .class-name i {
+            font-size: 1.2rem;
+        }
+
+        .trainer {
+            color: #9ca3af;
+            font-size: 0.9rem;
+        }
+
+        .time {
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+
+        .difficulty {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .beginner {
+            background-color: #10b981;
+            color: #fff;
+        }
+
+        .intermediate {
+            background-color: #f59e0b;
+            color: #fff;
+        }
+
+        .advanced {
+            background-color: #ef4444;
+            color: #fff;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #1e3a8a;
+            color: #fff;
+            padding: 3rem 0 1.5rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-column {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 2rem;
+        }
+
+        .footer-column h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 2px;
+            background-color: #2563eb;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-column a {
+            color: #e2e8f0;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-column a:hover {
+            color: #60a5fa;
+            padding-left: 5px;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #9ca3af;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                padding: 1rem 0;
+            }
+
+            .nav-links {
+                position: static;
+                transform: none;
+                flex-direction: column;
+                width: 100%;
+                gap: 0.5rem;
+                margin-top: 1rem;
+            }
+
+            .nav-link {
+                width: 100%;
+                text-align: center;
+            }
+
+            .profile-icon {
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+            }
+
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .schedule-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .schedule-table th,
+            .schedule-table td {
+                padding: 0.8rem 0.5rem;
+            }
+
+            .footer-content {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="images/Logo.png" alt="NU Logo" class="logo-img">
+            </div>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="https://www.nu.edu.eg/" class="nav-link" target="_blank">About NU</a>
+                <a href="/gym-schedule" class="nav-link">Gym Schedule</a>
+            </div>
+            <div class="profile-icon" id="adminIcon">
+                <img src="images/Admin icon .png" alt="Admin" class="icon-img">
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Gym Schedule</h1>
+            <p>Find the perfect workout class to fit your schedule. Our professional trainers are ready to help you achieve your fitness goals.</p>
+        </div>
+    </section>
+
+    <!-- Schedule Section -->
+    <section class="schedule-section">
+        <div class="schedule-container">
+            <h2 class="section-title">Weekly Schedule</h2>
+            
+            <div class="schedule-tabs">
+                <button class="tab-btn active" data-day="monday">Monday</button>
+                <button class="tab-btn" data-day="tuesday">Tuesday</button>
+                <button class="tab-btn" data-day="wednesday">Wednesday</button>
+                <button class="tab-btn" data-day="thursday">Thursday</button>
+                <button class="tab-btn" data-day="friday">Friday</button>
+                <button class="tab-btn" data-day="saturday">Saturday</button>
+                <button class="tab-btn" data-day="sunday">Sunday</button>
+            </div>
+            
+            <!-- Monday Schedule -->
+            <div class="schedule-content active" id="monday">
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Class</th>
+                            <th>Trainer</th>
+                            <th>Difficulty</th>
+                            <th>Location</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="time">06:00 - 07:00</td>
+                            <td class="class-name"><i class="fas fa-running"></i> Morning Cardio</td>
+                            <td>Coach Ahmed</td>
+                            <td><span class="difficulty beginner">Beginner</span></td>
+                            <td>Main Gym</td>
+                        </tr>
+                        <tr>
+                            <td class="time">09:00 - 10:30</td>
+                            <td class="class-name"><i class="fas fa-dumbbell"></i> Strength Training</td>
+                            <td>Coach Alaa</td>
+                            <td><span class="difficulty intermediate">Intermediate</span></td>
+                            <td>Weight Room</td>
+                        </tr>
+                        <tr>
+                            <td class="time">12:00 - 13:00</td>
+                            <td class="class-name"><i class="fas fa-heartbeat"></i> HIIT</td>
+                            <td>Coach Sara</td>
+                            <td><span class="difficulty advanced">Advanced</span></td>
+                            <td>Studio 1</td>
+                        </tr>
+                        <tr>
+                            <td class="time">15:00 - 16:00</td>
+                            <td class="class-name"><i class="fas fa-spa"></i> Yoga</td>
+                            <td>Coach Laila</td>
+                            <td><span class="difficulty beginner">Beginner</span></td>
+                            <td>Studio 2</td>
+                        </tr>
+                        <tr>
+                            <td class="time">18:00 - 19:30</td>
+                            <td class="class-name"><i class="fas fa-fist-raised"></i> Boxing</td>
+                            <td>Coach Karim</td>
+                            <td><span class="difficulty intermediate">Intermediate</span></td>
+                            <td>Boxing Area</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Tuesday Schedule -->
+            <div class="schedule-content" id="tuesday">
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Class</th>
+                            <th>Trainer</th>
+                            <th>Difficulty</th>
+                            <th>Location</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="time">07:00 - 08:00</td>
+                            <td class="class-name"><i class="fas fa-bicycle"></i> Spinning</td>
+                            <td>Coach Hossam</td>
+                            <td><span class="difficulty intermediate">Intermediate</span></td>
+                            <td>Cardio Room</td>
+                        </tr>
+                        <tr>
+                            <td class="time">10:00 - 11:00</td>
+                            <td class="class-name"><i class="fas fa-dumbbell"></i> Core Strength</td>
+                            <td>Coach Alaa</td>
+                            <td><span class="difficulty beginner">Beginner</span></td>
+                            <td>Main Gym</td>
+                        </tr>
+                        <tr>
+                            <td class="time">13:00 - 14:30</td>
+                            <td class="class-name"><i class="fas fa-swimmer"></i> Swimming</td>
+                            <td>Coach Youssef</td>
+                            <td><span class="difficulty intermediate">Intermediate</span></td>
+                            <td>Pool</td>
+                        </tr>
+                        <tr>
+                            <td class="time">16:00 - 17:00</td>
+                            <td class="class-name"><i class="fas fa-burn"></i> Fat Burn</td>
+                            <td>Coach Sara</td>
+                            <td><span class="difficulty advanced">Advanced</span></td>
+                            <td>Studio 1</td>
+                        </tr>
+                        <tr>
+                            <td class="time">19:00 - 20:00</td>
+                            <td class="class-name"><i class="fas fa-music"></i> Zumba</td>
+                            <td>Coach Nour</td>
+                            <td><span class="difficulty beginner">Beginner</span></td>
+                            <td>Studio 2</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Wednesday Schedule -->
+            <div class="schedule-content" id="wednesday">
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Class</th>
+                            <th>Trainer</th>
+                            <th>Difficulty</th>
+                            <th>Location</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="time">06:00 - 07:00</td>
+                            <td class="class-name"><i class="fas fa-running"></i> Morning Cardio</td>
+                            <td>Coach Ahmed</td>
+                            <td><span class="difficulty beginner">Beginner</span></td>
+                            <td>Main Gym</td>
+                        </tr>
+                        <tr>
+                            <td class="time">09:00 - 10:30</td>
+                            <td class="class-name"><i class="fas fa-dumbbell"></i> Upper Body</td>
+                            <td>Coach Alaa</td>
+                            <td><span class="difficulty intermediate">Intermediate</span></td>
+                            <td>Weight Room</td>
+                        </tr>
+                        <tr>
+                            <td class="time">12:00 - 13:00</td>
+                            <td class="class-name"><i class="fas fa-heartbeat"></i> Circuit Training</td>
+                            <td>Coach Karim</td>
+                            <td><span class="difficulty advanced">Advanced</span></td>
+                            <td>Main Gym</td>
+                        </tr>
+                        <tr>
+                            <td class="time">15:00 - 16:00</td>
+                            <td class="class-name"><i class="fas fa-spa"></i> Pilates</td>
+                            <td>Coach Laila</td>
+                            <td><span class="difficulty beginner">Beginner</span></td>
+                            <td>Studio 2</td>
+                        </tr>
+                        <tr>
+                            <td class="time">18:00 - 19:30</td>
+                            <td class="class-name"><i class="fas fa-fist-raised"></i> Kickboxing</td>
+                            <td>Coach Hossam</td>
+                            <td><span class="difficulty intermediate">Intermediate</span></td>
+                            <td>Boxing Area</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Thursday Schedule -->
+            <div class="schedule-content" id="thursday">
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Class</th>
+                            <th>Trainer</th>
+                            <th>Difficulty</th>
+                            <th>Location</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="time">07:00 - 08:00</td>
+                            <td class="class-name"><i class="fas fa-bicycle"></i> Spinning</td>
+                            <td>Coach Hossam</td>
+                            <td><span class="difficulty intermediate">Intermediate</span></td>
+                            <td>Cardio Room</td>
+                        </tr>
+                        <tr>
+                            <td class="time">10:00 - 11:00</td>
+                            <td class="class-name"><i class="fas fa-dumbbell"></i> Lower Body</td>
+                            <td>Coach Alaa</td>
+                            <td><span class="difficulty intermediate">Intermediate</span></td>
+                            <td>Weight Room</td>
+                        </tr>
+                        <tr>
+                            <td class="time">13:00 - 14:30</td>
+                            <td class="class-name"><i class="fas fa-swimmer"></i> Swimming</td>
+                            <td>Coach Youssef</td>
+                            <td><span class="difficulty intermediate">Intermediate</span></td>
+                            <td>Pool</td>
+                        </tr>
+                        <tr>
+                            <td class="time">16:00 - 17:00</td>
+                            <td class="class-name"><i class="fas fa-burn"></i> Tabata</td>
+                            <td>Coach Sara</td>
+                            <td><span class="difficulty advanced">Advanced</span></td>
+                            <td>Studio 1</td>
+                        </tr>
+                        <tr>
+                            <td class="time">19:00 - 20:00</td>
+                            <td class="class-name"><i class="fas fa-music"></i> Dance Fitness</td>
+                            <td>Coach Nour</td>
+                            <td><span class="difficulty beginner">Beginner</span></td>
+                            <td>Studio 2</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Friday Schedule -->
+            <div class="schedule-content" id="friday">
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Class</th>
+                            <th>Trainer</th>
+                            <th>Difficulty</th>
+                            <th>Location</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="time">09:00 - 10:00</td>
+                            <td class="class-name"><i class="fas fa-dumbbell"></i> Full Body Workout</td>
+                            <td>Coach Ahmed</td>
+                            <td><span class="difficulty intermediate">Intermediate</span></td>
+                            <td>Main Gym</td>
+                        </tr>
+                        <tr>
+                            <td class="time">11:00 - 12:00</td>
+                            <td class="class-name"><i class="fas fa-spa"></i> Yoga</td>
+                            <td>Coach Laila</td>
+                            <td><span class="difficulty beginner">Beginner</span></td>
+                            <td>Studio 2</td>
+                        </tr>
+                        <tr>
+                            <td class="time">14:00 - 15:30</td>
+                            <td class="class-name"><i class="fas fa-basketball-ball"></i> Basketball</td>
+                            <td>Coach Karim</td>
+                            <td><span class="difficulty beginner">Beginner</span></td>
+                            <td>Basketball Court</td>
+                        </tr>
+                        <tr>
+                            <td class="time">16:00 - 17:00</td>
+                            <td class="class-name"><i class="fas fa-heartbeat"></i> HIIT</td>
+                            <td>Coach Sara</td>
+                            <td><span class="difficulty advanced">Advanced</span></td>
+                            <td>Studio 1</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Saturday Schedule -->
+            <div class="schedule-content" id="saturday">
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Class</th>
+                            <th>Trainer</th>
+                            <th>Difficulty</th>
+                            <th>Location</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="time">08:00 - 09:30</td>
+                            <td class="class-name"><i class="fas fa-running"></i> Weekend Cardio</td>
+                            <td>Coach Ahmed</td>
+                            <td><span class="difficulty intermediate">Intermediate</span></td>
+                            <td>Main Gym</td>
+                        </tr>
+                        <tr>
+                            <td class="time">10:00 - 11:00</td>
+                            <td class="class-name"><i class="fas fa-dumbbell"></i> Strength & Conditioning</td>
+                            <td>Coach Alaa</td>
+                            <td><span class="difficulty advanced">Advanced</span></td>
+                            <td>Weight Room</td>
+                        </tr>
+                        <tr>
+                            <td class="time">12:00 - 13:30</td>
+                            <td class="class-name"><i class="fas fa-swimmer"></i> Swimming</td>
+                            <td>Coach Youssef</td>
+                            <td><span class="difficulty beginner">Beginner</span></td>
+                            <td>Pool</td>
+                        </tr>
+                        <tr>
+                            <td class="time">15:00 - 16:00</td>
+                            <td class="class-name"><i class="fas fa-futbol"></i> Football Training</td>
+                            <td>Coach Karim</td>
+                            <td><span class="difficulty intermediate">Intermediate</span></td>
+                            <td>Football Field</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Sunday Schedule -->
+            <div class="schedule-content" id="sunday">
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Class</th>
+                            <th>Trainer</th>
+                            <th>Difficulty</th>
+                            <th>Location</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="time">09:00 - 10:00</td>
+                            <td class="class-name"><i class="fas fa-spa"></i> Meditation & Stretching</td>
+                            <td>Coach Laila</td>
+                            <td><span class="difficulty beginner">Beginner</span></td>
+                            <td>Studio 2</td>
+                        </tr>
+                        <tr>
+                            <td class="time">11:00 - 12:30</td>
+                            <td class="class-name"><i class="fas fa-dumbbell"></i> Light Training</td>
+                            <td>Coach Alaa</td>
+                            <td><span class="difficulty beginner">Beginner</span></td>
+                            <td>Main Gym</td>
+                        </tr>
+                        <tr>
+                            <td class="time">14:00 - 15:00</td>
+                            <td class="class-name"><i class="fas fa-swimmer"></i> Open Swim</td>
+                            <td>Coach Youssef</td>
+                            <td><span class="difficulty beginner">Beginner</span></td>
+                            <td>Pool</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>Contact Us</h3>
+                <ul>
+                    <li><i class="fas fa-phone"></i> <a href="tel:16453">16453</a></li>
+                    <li><i class="fas fa-envelope"></i> <a href="mailto:sports@nu.edu.eg">sports@nu.edu.eg</a></li>
+                    <li><i class="fas fa-map-marker-alt"></i> Juhayna Square, 26th of July Corridor, El Sheikh Zayed</li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Follow Us</h3>
+                <ul>
+                    <li><i class="fab fa-facebook"></i> <a href="https://www.facebook.com/NileUniversity" target="_blank">Facebook</a></li>
+                    <li><i class="fab fa-instagram"></i> <a href="https://www.instagram.com/nileuniversity.eg/" target="_blank">Instagram</a></li>
+                    <li><i class="fab fa-youtube"></i> <a href="https://www.youtube.com/c/nileuniversity" target="_blank">YouTube</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 NU Sports Center. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Tab functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const scheduleContents = document.querySelectorAll('.schedule-content');
+            
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all buttons and contents
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    scheduleContents.forEach(content => content.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    btn.classList.add('active');
+                    
+                    // Show corresponding content
+                    const day = btn.getAttribute('data-day');
+                    document.getElementById(day).classList.add('active');
+                });
+            });
+            
+            // Admin icon functionality (same as main page)
+            const adminIcon = document.getElementById('adminIcon');
+            if (adminIcon) {
+                adminIcon.addEventListener('click', function() {
+                    // Redirect to main page for admin login
+                    window.location.href = '/';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,3369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NU Sports center</title>
+    <!-- Add Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Add Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* Root Variables for Dark Mode */
+        :root {
+            --background-light: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --background-dark: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --text-light: #1e293b;
+            --text-dark: #f8fafc;
+            --navbar-light: #1e3a8a;
+            --navbar-dark: #0f172a;
+            --card-light: rgba(255, 255, 255, 0.1);
+            --card-dark: rgba(15, 23, 42, 0.7);
+        }
+
+        /* Admin Login Modal Styles */
+        .admin-login-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .admin-login-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: slideInScale 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+        }
+
+        .admin-login-header {
+            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .admin-login-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .admin-login-header p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .admin-login-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            border-radius: 50%;
+        }
+
+        .admin-login-body {
+            background: white;
+            padding: 2rem;
+        }
+
+        .admin-form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .admin-form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #1e3a8a;
+            font-weight: 600;
+        }
+
+        .admin-input-group {
+            position: relative;
+        }
+
+        .admin-input-icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 12px;
+            color: #94a3b8;
+            z-index: 1;
+        }
+
+        .admin-input {
+            width: 100%;
+            padding: 0.9rem 1.2rem 0.9rem 2.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #f8fafc;
+        }
+
+        .admin-input:focus {
+            border-color: #2563eb;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+            background-color: #fff;
+        }
+
+        .admin-login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .admin-login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+        }
+
+        .admin-login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .admin-close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .admin-close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .admin-error-message {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 0.8rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: none;
+            border-left: 4px solid #dc2626;
+        }
+
+        @keyframes slideInScale {
+            from {
+                transform: translate(-50%, -50%) scale(0.7);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Make profile icon clickable */
+        .profile-icon {
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .profile-icon:hover {
+            transform: scale(1.05);
+        }
+
+        .icon-img {
+            height: 50px;
+            width: auto;
+            transition: all 0.3s ease;
+            border-radius: 50%;
+            padding: 0.3rem;
+        }
+
+        .icon-img:hover {
+            transform: scale(1.1);
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+
+        /* Autocomplete container */
+        .autocomplete {
+            position: relative;
+            width: 100%;
+        }
+
+        .autocomplete-items {
+            position: absolute;
+            border: 1px solid #ddd;
+            border-top: none;
+            z-index: 99;
+            top: 100%;
+            left: 0;
+            right: 0;
+            max-height: 250px;
+            overflow-y: auto;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        body.dark-mode .autocomplete-items {
+            background-color: #1e293b;
+            border-color: #334155;
+        }
+
+        .autocomplete-items div {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .autocomplete-items div:hover {
+            background-color: #e2e8f0;
+        }
+
+        body.dark-mode .autocomplete-items div:hover {
+            background-color: #334155;
+        }
+
+        .autocomplete-active {
+            background-color: #2563eb !important;
+            color: #ffffff;
+        }
+
+        body.dark-mode .autocomplete-active {
+            background-color: #3b82f6 !important;
+        }
+
+        /* ✅ NEW: Slide Bar Check Styles */
+        .form-slide-navigator {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 8px;
+            border-radius: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            z-index: 1002;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        body.dark-mode .form-slide-navigator {
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .form-slide-navigator.active {
+            display: flex;
+        }
+
+        .slide-check-item {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            border: 2px solid #cbd5e1;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide-check-item:hover {
+            transform: scale(1.2);
+            border-color: #2563eb;
+        }
+
+        .slide-check-item.completed {
+            background: #10b981;
+            border-color: #10b981;
+            animation: checkPulse 0.5s ease;
+        }
+
+        .slide-check-item.completed::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .slide-check-item.current {
+            background: #2563eb;
+            border-color: #2563eb;
+            transform: scale(1.3);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+        }
+
+        @keyframes checkPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        .slide-check-tooltip {
+            position: absolute;
+            right: 35px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .slide-check-item:hover .slide-check-tooltip {
+            opacity: 1;
+        }
+
+        .form-navigation-controls {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-arrow {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #2563eb;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .nav-arrow:hover {
+            background: #1d4ed8;
+            transform: scale(1.1);
+        }
+
+        .nav-arrow:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Enhanced form group styles for slide checks */
+        .form-group {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border-left: 4px solid #e2e8f0;
+            position: relative;
+            scroll-margin-top: 100px;
+        }
+
+        .form-group.field-completed {
+            border-left-color: #10b981;
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .form-group.field-focused {
+            border-left-color: #2563eb;
+            background: rgba(37, 99, 235, 0.05);
+            transform: translateX(5px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.15);
+        }
+
+        body.dark-mode .form-group {
+            background: rgba(30, 41, 59, 0.8);
+            border-left: 4px solid #334155;
+        }
+
+        body.dark-mode .form-group.field-completed {
+            border-left-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        body.dark-mode .form-group.field-focused {
+            border-left-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .form-group:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.8rem;
+            color: #1e3a8a;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+        }
+
+        body.dark-mode .form-group label {
+            color: #e2e8f0;
+        }
+
+        .form-group.required label::after {
+            content: '*';
+            color: #ef4444;
+            margin-left: 4px;
+        }
+
+        .form-group-icon {
+            position: absolute;
+            top: 1.5rem;
+            right: 3rem;
+            color: #94a3b8;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group.field-completed .form-group-icon {
+            color: #10b981;
+        }
+
+        .form-group.field-focused .form-group-icon {
+            color: #2563eb;
+        }
+
+        /* ✅ END: Slide Bar Check Styles */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        body {
+            background: var(--background-light);
+            min-height: 100vh;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        body.dark-mode {
+            background: var(--background-dark);
+            color: var(--text-dark);
+        }
+
+        /* Dark Mode Toggle Styles */
+        .dark-mode-toggle {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 999;
+        }
+
+        .dark-mode-checkbox {
+            opacity: 0;
+            position: absolute;
+        }
+
+        .dark-mode-label {
+            background: linear-gradient(40deg, #2563eb, #7e22ce);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 50px;
+            position: relative;
+            padding: 5px;
+            height: 26px;
+            width: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+        }
+
+        .dark-mode-ball {
+            background-color: #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            height: 22px;
+            width: 22px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .dark-mode-checkbox:checked + .dark-mode-label .dark-mode-ball {
+            transform: translateX(24px);
+        }
+
+        .fa-moon {
+            color: #f8fafc;
+            font-size: 12px;
+        }
+
+        .fa-sun {
+            color: #fef08a;
+            font-size: 12px;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background-color: var(--navbar-light);
+            padding: 0.8rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+
+        body.dark-mode .navbar {
+            background-color: var(--navbar-dark);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            position: relative;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .logo-img {
+            height: 45px;
+            width: auto;
+            transition: transform 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+
+        .logo-img:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background-color: #2563eb;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(37, 99, 235, 0.1);
+            color: #60a5fa;
+        }
+
+        .nav-link:hover::after {
+            width: 80%;
+        }
+
+        /* Hero Slider Styles */
+        .hero-slider {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+            margin-top: -100px;
+            padding-top: 100px;
+        }
+
+        .slider-container {
+            position: relative;
+            height: 100%;
+            width: 100%;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        #slide1 {
+            background-image: url('https://images.unsplash.com/photo-1517649763962-0c623066013b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80');
+        }
+
+        #slide2 {
+            background-image: url('https://images.unsplash.com/photo-1574680178050-55c6a6a96e0a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80');
+        }
+
+        #slide3 {
+            background-image: url('https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80');
+        }
+
+        .slide-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 800px;
+            padding: 2rem;
+            color: white;
+            transform: translateY(50px);
+            opacity: 0;
+            transition: all 1s ease 0.5s;
+        }
+
+        .slide.active .slide-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .slide-content h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #ffffff, #e2e8f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .slide-content p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: #e2e8f0;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #3d013a 0%, #460357 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(106, 3, 165, 0.3);
+            border: 2px solid transparent;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(106, 3, 165, 0.4);
+            background: linear-gradient(135deg, #460357 0%, #7e0574 100%);
+        }
+
+        .slider-controls {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .prev-btn, .next-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin: 0 15px;
+            transition: all 0.3s ease;
+        }
+
+        .prev-btn:hover, .next-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.1);
+        }
+
+        .slider-dots {
+            display: flex;
+            gap: 10px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background: white;
+            transform: scale(1.2);
+        }
+
+        /* Main Content */
+        .main-content {
+            position: relative;
+            z-index: 2;
+            background: transparent;
+            margin-top: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        /* Sign In Button */
+        .buttons-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .sign-in-btn {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            padding: 1.2rem 2.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            min-width: 250px;
+            text-align: center;
+            margin: 1rem;
+            border: 2px solid transparent;
+            z-index: 1;
+        }
+
+        .sign-in-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+            z-index: -1;
+            transition: opacity 0.4s ease;
+            opacity: 0;
+        }
+
+        .sign-in-btn:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 15px 30px rgba(37, 99, 235, 0.4);
+            letter-spacing: 2px;
+        }
+
+        .sign-in-btn:hover::before {
+            opacity: 1;
+        }
+
+        .sign-in-btn:active {
+            transform: translateY(-3px);
+        }
+
+        #footballBtn {
+            background: linear-gradient(135deg, #3d013a 0%, #460357 100%);
+            box-shadow: 0 10px 25px rgba(106, 3, 165, 0.3);
+        }
+
+        #footballBtn::before {
+            background: linear-gradient(135deg, #3b003d 0%, #7e0574 100%);
+        }
+
+        #medicalBtn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        #medicalBtn::before {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        }
+
+        /* Statistics Section Styles */
+        .statistics-section {
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            position: relative;
+            overflow: hidden;
+            margin-top: 3rem;
+        }
+
+        .statistics-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1517838277536-f5f99be501cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .statistics-section .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 3rem;
+            position: relative;
+            z-index: 1;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+            max-width: 250px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            color: #60a5fa;
+            margin-bottom: 1rem;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: #e2e8f0;
+            font-weight: 500;
+        }
+
+        /* Enhanced Coaches Section */
+        .coaches-section {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.8) 0%, rgba(37, 99, 235, 0.8) 100%);
+            margin: 6rem auto;
+            max-width: 1400px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .coaches-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/865c240a508a69b43ce440e4bdd1781d.jpg-TF14tVkTHONZIz9QE99JYepDGFcnB2.jpeg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: -1;
+        }
+
+        .coaches-title {
+            text-align: center;
+            font-size: 3.5rem;
+            color: #fff;
+            margin-bottom: 3rem;
+            font-family: 'Playfair Display', serif;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .coaches-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #fff, transparent);
+            border-radius: 2px;
+        }
+
+        .coaches-container {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .coach-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 350px;
+            position: relative;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 2rem;
+            transform: translateY(30px);
+            opacity: 0;
+            animation: fadeInUp 0.6s forwards;
+        }
+
+        body.dark-mode .coach-card {
+            background: var(--card-dark);
+        }
+
+        .coach-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .coach-card:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .coach-card:hover {
+            transform: translateY(-15px) scale(1.03);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .coach-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.8));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .coach-card:hover::before {
+            opacity: 1;
+        }
+
+        .coach-image-box {
+            position: relative;
+            width: 100%;
+            height: 380px;
+            overflow: hidden;
+        }
+
+        .coach-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+
+        .coach-card:hover .coach-image {
+            transform: scale(1.1);
+        }
+
+        .coach-info-box {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
+            color: #fff;
+            padding: 1.2rem;
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-align: center;
+            z-index: 2;
+            transform: translateY(0);
+            transition: transform 0.4s ease;
+            box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .coach-card:hover .coach-info-box {
+            transform: translateY(5px);
+            background: linear-gradient(90deg, #2563eb 0%, #1e40af 100%);
+        }
+
+        .coach-details {
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .coach-name {
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .coach-name::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: #3b82f6;
+            transition: width 0.3s ease;
+        }
+
+        .coach-card:hover .coach-name::after {
+            width: 100%;
+        }
+
+        .coach-title {
+            color: #93c5fd;
+            font-size: 1.1rem;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .coach-details ul {
+            color: #e2e8f0;
+            font-size: 1rem;
+            margin: 0;
+            padding-left: 1.5em;
+            list-style-type: none;
+        }
+
+        .coach-details ul li {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .coach-details ul li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #3b82f6;
+            font-weight: bold;
+        }
+
+        .coach-social {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .coach-social a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: #fff;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .coach-social a:hover {
+            background: #3b82f6;
+            transform: translateY(-5px);
+        }
+
+        .coach-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #3b82f6;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            z-index: 3;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transform: rotate(5deg);
+        }
+
+        .coach-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #3b82f6;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #93c5fd;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Form Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1001;
+            animation: fadeIn 0.4s ease;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 700px;
+            margin: 0 auto;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-height: 85vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #2563eb #e2e8f0;
+            position: relative;
+            border: 1px solid rgba(37, 99, 235, 0.2);
+        }
+
+        body.dark-mode .modal-content {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: #f8fafc;
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px 20px 0 0;
+            position: relative;
+            text-align: center;
+        }
+
+        .form-header h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .form-header p {
+            font-size: 1rem;
+            opacity: 0.9;
+            max-width: 80%;
+            margin: 0 auto;
+        }
+
+        .form-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            width: 70px;
+            height: 70px;
+            line-height: 70px;
+            border-radius: 50%;
+        }
+
+        #footballFormHeader {
+            background: linear-gradient(135deg, #460146 0%, #4e002e 100%);
+        }
+
+        #medicalFormHeader {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .form-body {
+            padding: 2.5rem;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px) scale(0.95);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Custom scrollbar for Webkit browsers (Chrome, Safari, etc.) */
+        .modal-content::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 5px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background-color: #2563eb;
+            border-radius: 5px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background-color: #1d4ed8;
+        }
+
+        /* Form progress indicator */
+        .form-progress {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px 10px;
+            border-radius: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            z-index: 1002;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        body.dark-mode .form-progress {
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .progress-dot {
+            width: 15px;
+            height: 15px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.active {
+            background: #2563eb;
+            transform: scale(1.3);
+        }
+
+        .progress-dot:hover {
+            background: #60a5fa;
+            transform: scale(1.2);
+        }
+
+        .progress-dot.completed {
+            background: #10b981;
+            position: relative;
+        }
+
+        .progress-dot.completed::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 0.6rem;
+            font-weight: bold;
+        }
+
+        .form-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .form-section-title {
+            font-size: 1.3rem;
+            color: #1e3a8a;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            font-weight: 600;
+        }
+
+        body.dark-mode .form-section-title {
+            color: #e2e8f0;
+            border-bottom-color: #334155;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="tel"],
+        input[type="file"] {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #f8fafc;
+        }
+
+        body.dark-mode input[type="text"],
+        body.dark-mode input[type="number"],
+        body.dark-mode input[type="tel"],
+        body.dark-mode input[type="file"],
+        body.dark-mode textarea {
+            background-color: #1e293b;
+            border-color: #334155;
+            color: #f8fafc;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="tel"]:focus,
+        input[type="file"]:focus {
+            border-color: #2563eb;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+            background-color: #fff;
+        }
+
+        body.dark-mode input[type="text"]:focus,
+        body.dark-mode input[type="number"]:focus,
+        body.dark-mode input[type="tel"]:focus,
+        body.dark-mode input[type="file"]:focus,
+        body.dark-mode textarea:focus {
+            background-color: #0f172a;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 10px;
+            color: #94a3b8;
+            z-index: 1;
+        }
+
+        .input-with-icon {
+            padding-left: 2.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .form-footer {
+            margin-top: 2rem;
+            text-align: center;
+            padding: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        body.dark-mode .form-footer {
+            border-top-color: #334155;
+        }
+
+        .form-note {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        body.dark-mode .form-note {
+            color: #94a3b8;
+        }
+
+        .form-note i {
+            color: #2563eb;
+            margin-right: 5px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            resize: vertical;
+            min-height: 120px;
+            line-height: 1.6;
+            font-size: 1rem;
+            background-color: #f8fafc;
+        }
+
+        textarea:focus {
+            border-color: #2563eb;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+            background-color: #fff;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            background: #f1f5f9;
+            margin-bottom: 0;
+        }
+
+        body.dark-mode .checkbox-group {
+            background: #1e293b;
+        }
+
+        .checkbox-group:hover {
+            background: #e2e8f0;
+        }
+
+        body.dark-mode .checkbox-group:hover {
+            background: #334155;
+        }
+
+        .checkbox-container {
+            position: relative;
+            padding-left: 30px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox-container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 20px;
+            width: 20px;
+            background-color: #fff;
+            border: 2px solid #cbd5e1;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        body.dark-mode .checkmark {
+            background-color: #1e293b;
+            border-color: #475569;
+        }
+
+        .checkbox-container:hover input ~ .checkmark {
+            border-color: #2563eb;
+        }
+
+        .checkbox-container input:checked ~ .checkmark {
+            background-color: #2563eb;
+            border-color: #2563eb;
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        .checkbox-container input:checked ~ .checkmark:after {
+            display: block;
+        }
+
+        .checkbox-container .checkmark:after {
+            left: 6px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        /* Success Message */
+        .success-message {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 2.5rem 3rem;
+            border-radius: 15px;
+            text-align: center;
+            z-index: 1002;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            min-width: 350px;
+        }
+
+        .success-message::before {
+            content: '✓';
+            display: block;
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: scaleIn 0.5s ease;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .success-message h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .success-message p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 0;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes scaleIn {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .success-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.2);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .close-btn:hover {
+            color: #fff;
+            transform: rotate(90deg);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        footer {
+            position: relative;
+            z-index: 3;
+            background-color: rgba(30, 58, 138, 0.95);
+            color: #fff;
+            padding: 4rem 0 2rem;
+            margin-top: 3rem;
+        }
+
+        body.dark-mode footer {
+            background-color: rgba(15, 23, 42, 0.95);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 8rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-column {
+            flex: 0 1 400px;
+        }
+
+        .footer-column h3 {
+            color: #fff;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 2px;
+            background-color: #2563eb;
+        }
+
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 1rem;
+        }
+
+        .footer-column ul li i {
+            margin-right: 10px;
+            color: #2563eb;
+            width: 20px;
+            text-align: center;
+        }
+
+        .footer-column a {
+            color: #e2e8f0;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .footer-column a:hover {
+            color: #2563eb;
+            transform: translateX(5px);
+        }
+
+        .location-info {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .location-info i {
+            color: #2563eb;
+            font-size: 1.2rem;
+            margin-top: 0.3rem;
+        }
+
+        .location-info p {
+            line-height: 1.6;
+            color: #e2e8f0;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+                gap: 2rem;
+                align-items: center;
+            }
+
+            .footer-column {
+                text-align: center;
+                max-width: 100%;
+            }
+
+            .footer-column h3::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .location-info {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0.8rem 1rem;
+            }
+
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 0.5rem 0;
+            }
+
+            .nav-links {
+                position: static;
+                transform: none;
+                flex-direction: column;
+                gap: 1rem;
+                width: 100%;
+            }
+
+            .nav-link {
+                width: 100%;
+                text-align: center;
+                padding: 0.8rem;
+            }
+
+            .logo-img {
+                height: 40px;
+            }
+
+            .profile-icon {
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+            }
+
+            .profile-link {
+                font-size: 1.5rem;
+            }
+
+            .icon-img {
+                height: 45px;
+            }
+
+            .slide-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .slide-content p {
+                font-size: 1.2rem;
+            }
+            
+            .cta-button {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+            }
+
+            .stat-card {
+                min-width: 150px;
+            }
+            
+            .stat-number {
+                font-size: 2.5rem;
+            }
+
+            .coaches-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .coach-card {
+                width: 90%;
+                max-width: 400px;
+            }
+            
+            .coaches-title {
+                font-size: 2.5rem;
+            }
+
+            /* ✅ Mobile adjustments for slide navigator */
+            .form-slide-navigator {
+                right: 10px;
+                padding: 10px 5px;
+                gap: 8px;
+            }
+
+            .slide-check-item {
+                width: 16px;
+                height: 16px;
+            }
+
+            .nav-arrow {
+                width: 25px;
+                height: 25px;
+            }
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+            display: block;
+            width: 100%;
+            margin-top: 2rem;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+        }
+
+        .submit-btn:active {
+            transform: translateY(1px);
+        }
+
+        .submit-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(45deg);
+            transition: 0.5s;
+        }
+
+        .submit-btn:hover::after {
+            transform: rotate(45deg) translate(50%, 50%);
+        }
+
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #3d013a 0%, #460357 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+            box-shadow: 0 4px 15px rgba(106, 3, 165, 0.3);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(106, 3, 165, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <!-- Dark Mode Toggle -->
+    <div class="dark-mode-toggle">
+        <input type="checkbox" id="darkModeToggle" class="dark-mode-checkbox">
+        <label for="darkModeToggle" class="dark-mode-label">
+            <i class="fas fa-sun"></i>
+            <i class="fas fa-moon"></i>
+            <div class="dark-mode-ball"></div>
+        </label>
+    </div>
+
+    <!-- Back to Top Button -->
+    <div class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="images/Logo.png" alt="NU Logo" class="logo-img">
+            </div>
+            <div class="nav-links">
+                <a href="https://www.nu.edu.eg/" class="nav-link" target="_blank">About NU</a>
+                <a href="gym-schedule.html" class="nav-link">Gym Schedule</a>
+            </div>
+            <div class="profile-icon" id="adminIcon">
+                <img src="images/Admin icon .png" alt="Admin" class="icon-img">
+            </div>
+        </div>
+    </nav>
+
+    <!-- Admin Login Modal -->
+    <div class="admin-login-modal" id="adminLoginModal">
+        <div class="admin-login-content">
+            <div class="admin-login-header">
+                <button class="admin-close-btn" id="adminCloseBtn">&times;</button>
+                <div class="admin-login-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h2>Admin Access</h2>
+                <p>Secure login for authorized personnel only</p>
+            </div>
+            <div class="admin-login-body">
+                <div class="admin-error-message" id="adminErrorMessage"></div>
+                <form id="adminLoginForm">
+                    <div class="admin-form-group">
+                        <label for="adminUsername">Username</label>
+                        <div class="admin-input-group">
+                            <i class="fas fa-user admin-input-icon"></i>
+                            <input type="text" id="adminUsername" class="admin-input" required placeholder="Enter username">
+                        </div>
+                    </div>
+                    <div class="admin-form-group">
+                        <label for="adminPassword">Password</label>
+                        <div class="admin-input-group">
+                            <i class="fas fa-lock admin-input-icon"></i>
+                            <input type="password" id="adminPassword" class="admin-input" required placeholder="Enter password">
+                        </div>
+                    </div>
+                    <button type="submit" class="admin-login-btn" id="adminLoginBtn">
+                        <i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i>
+                        Access Dashboard
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Slider Section -->
+    <section class="hero-slider">
+        <div class="slider-container">
+            <div class="slide active" id="slide1">
+                <div class="slide-content">
+                    <h1>Welcome to NU Sports Center</h1>
+                    <p>Your gateway to fitness and athletic excellence</p>
+                    <a href="https://www.nu.edu.eg/students/athletes-office" target="_blank" class="cta-button">Explore Facilities</a>
+                </div>
+            </div>
+            <div class="slide" id="slide2">
+                <div class="slide-content">
+                    <h1>Professional Coaching</h1>
+                    <p>Train with certified experts in various sports disciplines</p>
+                    <a href="#coaches" class="cta-button">Meet Our Coaches</a>
+                </div>
+            </div>
+            <div class="slide" id="slide3">
+                <div class="slide-content">
+                    <h1>Upcoming Tournaments</h1>
+                    <p>Register now for our seasonal competitions</p>
+                    <a href="#" class="cta-button" id="tournamentBtn">Register Now</a>
+                </div>
+            </div>
+            <div class="slider-controls">
+                <button class="prev-btn"><i class="fas fa-chevron-left"></i></button>
+                <div class="slider-dots">
+                    <span class="dot active" data-slide="0"></span>
+                    <span class="dot" data-slide="1"></span>
+                    <span class="dot" data-slide="2"></span>
+                </div>
+                <button class="next-btn"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="buttons-container">
+            <button id="footballBtn" class="sign-in-btn">Football Tournament</button>
+            <button id="medicalBtn" class="sign-in-btn">Medical Form</button>
+        </div>
+    </div>
+
+    <!-- Enhanced Coaches Section -->
+    <section class="coaches-section" id="coaches">
+        <h2 class="coaches-title">Our Professional Coaches</h2>
+        <div class="coaches-container">
+            <div class="coach-card">
+                <div class="coach-badge">Head Coach</div>
+                <div class="coach-image-box">
+                    <img src="images/Coach saber.jpg" alt="Admin"  class="coach-image">
+                    <div class="coach-info-box">
+                        Coach Ahmed Saber
+                    </div>
+                </div>
+                <div class="coach-details">
+                    <div class="coach-name">Football Coach</div>
+                    <div class="coach-title">UEFA Pro License</div>
+                    <ul>
+                        <li>Professional football coach with 10+ years of experience</li>
+                        <li>Specializes in team building and advanced tactics</li>
+                        <li>Helped many students achieve their athletic goals</li>
+                    </ul>
+                    <div class="coach-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">10+</div>
+                            <div class="stat-label">Years</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">50+</div>
+                            <div class="stat-label">Students</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">15</div>
+                            <div class="stat-label">Trophies</div>
+                        </div>
+                    </div>
+                    <div class="coach-social">
+                        <a href="https://www.facebook.com/A.SABER.OSMAN.14?rdid=MneSaiPfiVnKsDET&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F169dCVmbL1%2F#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com/c_ahmed_saber?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="coach-card">
+                <div class="coach-badge">Fitness Expert</div>
+                <div class="coach-image-box">
+                    <img src="images/Coach Alaa.png" alt="Admin"  class="coach-image">
+                    <div class="coach-info-box">
+                        Coach Alaa
+                    </div>
+                </div>
+                <div class="coach-details">
+                    <div class="coach-name">Gym Coach</div>
+                    <div class="coach-title">Certified Personal Trainer</div>
+                    <ul>
+                        <li>Certified gym instructor and personal trainer</li>
+                        <li>Expert in strength training and nutrition</li>
+                        <li>Motivates clients to reach their fitness potential</li>
+                    </ul>
+                    <div class="coach-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">20+</div>
+                            <div class="stat-label">Years</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">1000+</div>
+                            <div class="stat-label">Clients</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Certifications</div>
+                        </div>
+                    </div>
+                    <div class="coach-social">
+                        <a href="https://www.facebook.com/profile.php?id=100008289760180&mibextid=ZbWKwL" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="coach-card">    
+                <div class="coach-badge">Wellness Coach</div>
+                <div class="coach-image-box">
+                    <img src="images/Coach Sara.jpg" alt="Admin"  class="coach-image">
+                    <div class="coach-info-box">
+                        Coach Sara
+                    </div>
+                </div>
+                <div class="coach-details">
+                    <div class="coach-name">Yoga & Wellness</div>
+                    <div class="coach-title">Certified Yoga Instructor</div>
+                    <ul>
+                        <li>Specializes in yoga, pilates and mindfulness</li>
+                        <li>Focuses on holistic wellness and stress reduction</li>
+                        <li>Creates personalized wellness programs</li>
+                    </ul>
+                    <div class="coach-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">6+</div>
+                            <div class="stat-label">Years</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">75+</div>
+                            <div class="stat-label">Students</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">4</div>
+                            <div class="stat-label">Specialties</div>
+                        </div>
+                    </div>
+                    <div class="coach-social">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="statistics-section">
+        <div class="container">
+            <h2 class="section-title">NU Sports Center in Numbers</h2>
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <div class="stat-number" data-count="5000">0</div>
+                    <div class="stat-label">Active Members</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-medal"></i></div>
+                    <div class="stat-number" data-count="120">0</div>
+                    <div class="stat-label">Championships Won</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-dumbbell"></i></div>
+                    <div class="stat-number" data-count="25">0</div>
+                    <div class="stat-label">Fitness Programs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                    <div class="stat-number" data-count="300">0</div>
+                    <div class="stat-label">Events Per Year</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ✅ NEW: Form Slide Navigator -->
+    <div class="form-slide-navigator" id="formSlideNavigator">
+        <!-- Navigation dots will be added by JavaScript -->
+        <div class="form-navigation-controls">
+            <button class="nav-arrow" id="navUp" disabled>
+                <i class="fas fa-chevron-up"></i>
+            </button>
+            <button class="nav-arrow" id="navDown">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Form Modal -->
+    <div class="modal" id="formModal">
+        <div class="modal-content">
+            <div class="form-header" id="footballFormHeader">
+                <span class="close-btn">&times;</span>
+                <div class="form-icon"><i class="fas fa-futbol"></i></div>
+                <h2>Football Tournament Registration</h2>
+                <p>Complete the form below to register for the upcoming tournament</p>
+            </div>
+            <div class="form-body">
+                <form id="registrationForm">
+    <div class="form-section">
+        <h3 class="form-section-title">Personal Information</h3>
+        <div class="form-group required" data-field="first_name">
+            <label for="first_name">First Name</label>
+            <div class="input-group">
+                <i class="fas fa-user input-icon"></i>
+                <input type="text" id="first_name" name="first_name" class="input-with-icon" required placeholder="Enter your first name">
+            </div>
+        </div>
+        <div class="form-group required" data-field="last_name">
+            <label for="last_name">Last Name</label>
+            <div class="input-group">
+                <i class="fas fa-user input-icon"></i>
+                <input type="text" id="last_name" name="last_name" class="input-with-icon" required placeholder="Enter your last name">
+            </div>
+        </div>
+        <div class="form-group required" data-field="major">
+            <label for="major">Major</label>
+            <div class="input-group">
+                <i class="fas fa-university input-icon"></i>
+                <input type="text" id="major" name="major" class="input-with-icon" required placeholder="Enter your major">
+            </div>
+        </div>
+        <div class="form-group required" data-field="age">
+            <label for="age">Age</label>
+            <div class="input-group">
+                <i class="fas fa-birthday-cake input-icon"></i>
+                <input type="number" id="age" name="age" class="input-with-icon" required placeholder="Enter your age">
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-section">
+        <h3 class="form-section-title">Team Information</h3>
+        <div class="form-group required" data-field="team">
+        <label for="team">Team Name</label>
+        <div class="input-group autocomplete">
+            <i class="fas fa-users input-icon"></i>
+            <input type="text" id="team" name="team" class="input-with-icon" required placeholder="Start typing team name...">
+        </div>
+    </div>
+        <div class="form-group required" data-field="id">
+            <label for="id">ID Number</label>
+            <div class="input-group">
+                <i class="fas fa-id-card input-icon"></i>
+                <input type="text" id="id" name="id" class="input-with-icon" required placeholder="Enter your ID number">
+            </div>
+        </div>
+    </div>
+    
+    <button type="submit" class="submit-btn">Submit Registration</button>
+</form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Medical Form Modal -->
+    <div class="modal" id="medicalFormModal">
+        <div class="form-progress" id="formProgress">
+            <!-- Progress dots will be added by JavaScript -->
+        </div>
+        <div class="modal-content">
+            <div class="form-header" id="medicalFormHeader">
+                <span class="close-btn">&times;</span>
+                <div class="form-icon"><i class="fas fa-heartbeat"></i></div>
+                <h2>Medical Information Form</h2>
+                <p>Please provide accurate health information for our records</p>
+            </div>
+            <div class="form-body">
+                <form id="medicalForm">
+                    <div class="form-section">
+                        <h3 class="form-section-title">Personal Details</h3>
+                        <div class="form-group required" data-field="medicalName">
+                            <label for="medicalName">Full Name</label>
+                            <div class="input-group">
+                                <i class="fas fa-user input-icon"></i>
+                                <input type="text" id="medicalName" class="input-with-icon" required placeholder="Enter your full name">
+                            </div>
+                            <div class="form-group-icon"><i class="fas fa-user"></i></div>
+                        </div>
+                        <div class="form-group required" data-field="medicalCollege">
+                            <label for="medicalCollege">College</label>
+                            <div class="input-group">
+                                <i class="fas fa-university input-icon"></i>
+                                <input type="text" id="medicalCollege" class="input-with-icon" required placeholder="Enter your college name">
+                            </div>
+                            <div class="form-group-icon"><i class="fas fa-university"></i></div>
+                        </div>
+                        <div class="form-group required" data-field="medicalId">
+                            <label for="medicalId">ID Number</label>
+                            <div class="input-group">
+                                <i class="fas fa-id-card input-icon"></i>
+                                <input type="text" id="medicalId" class="input-with-icon" required placeholder="Enter your ID number">
+                            </div>
+                            <div class="form-group-icon"><i class="fas fa-id-card"></i></div>
+                        </div>
+                        <div class="form-group required" data-field="medicalPhone">
+                            <label for="medicalPhone">Phone Number</label>
+                            <div class="input-group">
+                                <i class="fas fa-phone input-icon"></i>
+                                <input type="tel" id="medicalPhone" class="input-with-icon" required placeholder="Enter your phone number">
+                            </div>
+                            <div class="form-group-icon"><i class="fas fa-phone"></i></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3 class="form-section-title">Medical History</h3>
+                        <div class="form-group" data-field="medicalConditions">
+                            <label for="medicalConditions">Do you currently suffer from any medical conditions? If yes, please explain.</label>
+                            <textarea id="medicalConditions" rows="3" placeholder="Describe any medical conditions you have..."></textarea>
+                            <div class="form-group-icon"><i class="fas fa-notes-medical"></i></div>
+                        </div>
+                        <div class="form-group" data-field="previousSurgeries">
+                            <label for="previousSurgeries">Have you had any previous surgeries? If yes, please explain.</label>
+                            <textarea id="previousSurgeries" rows="3" placeholder="Describe any previous surgeries..."></textarea>
+                            <div class="form-group-icon"><i class="fas fa-procedures"></i></div>
+                        </div>
+                        <div class="form-group" data-field="diabetes">
+                            <label class="checkbox-container">Do you suffer from diabetes?
+                                <input type="checkbox" id="diabetes">
+                                <span class="checkmark"></span>
+                            </label>
+                            <div class="form-group-icon"><i class="fas fa-syringe"></i></div>
+                        </div>
+                        <div class="form-group" data-field="bloodPressure">
+                            <label class="checkbox-container">Do you suffer from high blood pressure?
+                                <input type="checkbox" id="bloodPressure">
+                                <span class="checkmark"></span>
+                            </label>
+                            <div class="form-group-icon"><i class="fas fa-heart"></i></div>
+                        </div>
+                        <div class="form-group" data-field="heartDisease">
+                            <label for="heartDisease">Do you suffer from heart disease?</label>
+                            <textarea id="heartDisease" rows="2" placeholder="Describe any heart conditions..."></textarea>
+                            <div class="form-group-icon"><i class="fas fa-heartbeat"></i></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3 class="form-section-title">Additional Information</h3>
+                        <div class="form-group" data-field="medications">
+                            <label for="medications">Do you take any special medication? If yes, please explain.</label>
+                            <textarea id="medications" rows="3" placeholder="List any medications you take regularly..."></textarea>
+                            <div class="form-group-icon"><i class="fas fa-pills"></i></div>
+                        </div>
+                        <div class="form-group" data-field="spinalInjuries">
+                            <label class="checkbox-container">Have you had any spinal or neck injuries?
+                                <input type="checkbox" id="spinalInjuries">
+                                <span class="checkmark"></span>
+                            </label>
+                            <div class="form-group-icon"><i class="fas fa-bone"></i></div>
+                        </div>
+                        <div class="form-group" data-field="smoker">
+                            <label class="checkbox-container">Are you a smoker?
+                                <input type="checkbox" id="smoker">
+                                <span class="checkmark"></span>
+                            </label>
+                            <div class="form-group-icon"><i class="fas fa-smoking"></i></div>
+                        </div>
+                        <div class="form-group" data-field="sports">
+                            <label for="sports">Do you practice a specific sport? If yes, please explain.</label>
+                            <textarea id="sports" rows="3" placeholder="Describe any sports you practice regularly..."></textarea>
+                            <div class="form-group-icon"><i class="fas fa-running"></i></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3 class="form-section-title">Agreement</h3>
+                        <div class="form-group required" data-field="agreement">
+                            <label class="checkbox-container">By agreeing to this clause, I acknowledge that I am fully responsible for providing my complete information. If an error occurs as a result of my failure to provide sufficient information, the university is not responsible for this.
+                                <input type="checkbox" id="agreement" required>
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                        <div class="form-group required" data-field="signature">
+                            <label for="signature">Write your name for signature:</label>
+                            <div class="input-group">
+                                <i class="fas fa-signature input-icon"></i>
+                                <input type="text" id="signature" class="input-with-icon" required placeholder="Type your full name as signature">
+                            </div>
+                            <div class="form-group-icon"><i class="fas fa-signature"></i></div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Submit Medical Form</button>
+                    
+                    <div class="form-footer">
+                        <div class="form-note">
+                            <i class="fas fa-lock"></i> Your medical information will be kept confidential and used only for university health services.
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Message -->
+    <div class="success-overlay" id="successOverlay"></div>
+    <div class="success-message" id="successMessage">
+        <h2>Registration Successful!</h2>
+        <p>Thank you for registering for the Football Tournament.</p>
+        <p>We'll contact you soon with more details.</p>
+    </div>
+
+    <!-- Success Message for Medical Form -->
+    <div class="success-overlay" id="medicalSuccessOverlay"></div>
+    <div class="success-message" id="medicalSuccessMessage">
+        <h2>Medical Form Submitted!</h2>
+        <p>Thank you for submitting your medical information.</p>
+        <p>We'll review your information and contact you if needed.</p>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <ul>
+                        <li><i class="fas fa-phone"></i> <a href="tel:16453">16453</a></li>
+                        <li><i class="fab fa-instagram"></i> <a href="https://www.instagram.com/nileuniversity.eg/" target="_blank">Instagram</a></li>
+                        <li><i class="fab fa-youtube"></i> <a href="https://www.youtube.com/c/nileuniversity" target="_blank">Youtube</a></li>
+                        <li><i class="fab fa-facebook"></i> <a href="https://www.facebook.com/NileUniversity" target="_blank">Facebook</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Location</h3>
+                    <div class="location-info">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <p>Juhayna Square, 26th of July Corridor,<br>El Sheikh Zayed, Giza, Egypt</p>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 All elite data. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // DOM Elements
+    const elements = {
+        footballBtn: document.getElementById('footballBtn'),
+        medicalBtn: document.getElementById('medicalBtn'),
+        formModal: document.getElementById('formModal'),
+        medicalFormModal: document.getElementById('medicalFormModal'),
+        closeBtns: document.querySelectorAll('.close-btn'),
+        registrationForm: document.getElementById('registrationForm'),
+        medicalForm: document.getElementById('medicalForm'),
+        successMessage: document.getElementById('successMessage'),
+        medicalSuccessMessage: document.getElementById('medicalSuccessMessage'),
+        successOverlay: document.getElementById('successOverlay'),
+        medicalSuccessOverlay: document.getElementById('medicalSuccessOverlay'),
+        darkModeToggle: document.getElementById('darkModeToggle'),
+        backToTop: document.getElementById('backToTop'),
+        slides: document.querySelectorAll('.slide'),
+        dots: document.querySelectorAll('.dot'),
+        prevBtn: document.querySelector('.prev-btn'),
+        nextBtn: document.querySelector('.next-btn'),
+        tournamentBtn: document.getElementById('tournamentBtn'),
+        teamInput: document.getElementById('team'),
+        formInputs: document.querySelectorAll('#medicalForm input, #medicalForm textarea'),
+        statNumbers: document.querySelectorAll('.stat-number'),
+        // Admin elements
+        adminIcon: document.getElementById('adminIcon'),
+        adminLoginModal: document.getElementById('adminLoginModal'),
+        adminCloseBtn: document.getElementById('adminCloseBtn'),
+        adminLoginForm: document.getElementById('adminLoginForm'),
+        adminErrorMessage: document.getElementById('adminErrorMessage'),
+        adminLoginBtn: document.getElementById('adminLoginBtn'),
+        // ✅ NEW: Slide navigator elements
+        formSlideNavigator: document.getElementById('formSlideNavigator'),
+        navUp: document.getElementById('navUp'),
+        navDown: document.getElementById('navDown')
+    };
+
+    // ✅ NEW: Slide Bar Check System
+    let currentFormFields = [];
+    let currentFieldIndex = 0;
+    let slideCheckItems = [];
+
+    function initializeSlideNavigator(formType) {
+        const navigator = elements.formSlideNavigator;
+        navigator.innerHTML = '';
+        
+        // Get all form groups for the current form
+        const formSelector = formType === 'football' ? '#registrationForm' : '#medicalForm';
+        currentFormFields = Array.from(document.querySelectorAll(`${formSelector} .form-group[data-field]`));
+        
+        // Create slide check items
+        slideCheckItems = [];
+        currentFormFields.forEach((field, index) => {
+            const slideItem = document.createElement('div');
+            slideItem.className = 'slide-check-item';
+            slideItem.dataset.index = index;
+            
+            const tooltip = document.createElement('div');
+            tooltip.className = 'slide-check-tooltip';
+            const fieldName = field.querySelector('label').textContent.replace('*', '').trim();
+            tooltip.textContent = fieldName;
+            slideItem.appendChild(tooltip);
+            
+            slideItem.addEventListener('click', () => scrollToField(index));
+            navigator.appendChild(slideItem);
+            slideCheckItems.push(slideItem);
+        });
+        
+        // Add navigation controls
+        const controls = document.createElement('div');
+        controls.className = 'form-navigation-controls';
+        controls.innerHTML = `
+            <button class="nav-arrow" id="navUp" disabled>
+                <i class="fas fa-chevron-up"></i>
+            </button>
+            <button class="nav-arrow" id="navDown">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        `;
+        navigator.appendChild(controls);
+        
+        // Update navigation button references
+        elements.navUp = navigator.querySelector('#navUp');
+        elements.navDown = navigator.querySelector('#navDown');
+        
+        // Add navigation button listeners
+        elements.navUp.addEventListener('click', () => navigateForm(-1));
+        elements.navDown.addEventListener('click', () => navigateForm(1));
+        
+        navigator.classList.add('active');
+        updateCurrentField(0);
+    }
+
+    function scrollToField(index) {
+        if (index >= 0 && index < currentFormFields.length) {
+            currentFieldIndex = index;
+            const field = currentFormFields[index];
+            
+            // Smooth scroll to field
+            field.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+            
+            // Focus on the input
+            const input = field.querySelector('input, textarea');
+            if (input) {
+                setTimeout(() => input.focus(), 500);
+            }
+            
+            updateCurrentField(index);
+        }
+    }
+
+    function navigateForm(direction) {
+        const newIndex = currentFieldIndex + direction;
+        if (newIndex >= 0 && newIndex < currentFormFields.length) {
+            scrollToField(newIndex);
+        }
+    }
+
+    function updateCurrentField(index) {
+        currentFieldIndex = index;
+        
+        // Update slide check items
+        slideCheckItems.forEach((item, i) => {
+            item.classList.remove('current');
+            if (i === index) {
+                item.classList.add('current');
+            }
+        });
+        
+        // Update navigation buttons
+        elements.navUp.disabled = index === 0;
+        elements.navDown.disabled = index === currentFormFields.length - 1;
+        
+        // Update form group focus state
+        currentFormFields.forEach((field, i) => {
+            field.classList.remove('field-focused');
+            if (i === index) {
+                field.classList.add('field-focused');
+            }
+        });
+    }
+
+    function markFieldCompleted(fieldElement, completed) {
+        const fieldIndex = currentFormFields.indexOf(fieldElement);
+        if (fieldIndex !== -1 && slideCheckItems[fieldIndex]) {
+            slideCheckItems[fieldIndex].classList.toggle('completed', completed);
+            fieldElement.classList.toggle('field-completed', completed);
+        }
+    }
+
+    function checkFieldCompletion(input) {
+        const formGroup = input.closest('.form-group[data-field]');
+        if (!formGroup) return;
+        
+        let isCompleted = false;
+        
+        if (input.type === 'checkbox') {
+            isCompleted = input.checked;
+        } else if (input.tagName === 'TEXTAREA') {
+            isCompleted = input.value.trim().length > 0;
+        } else {
+            isCompleted = input.value.trim().length > 0;
+            
+            // Additional validation for specific fields
+            if (input.type === 'number' && input.value) {
+                const num = parseInt(input.value);
+                isCompleted = !isNaN(num) && num > 0;
+            }
+        }
+        
+        markFieldCompleted(formGroup, isCompleted);
+    }
+
+    function hideSlideNavigator() {
+        elements.formSlideNavigator.classList.remove('active');
+        currentFormFields = [];
+        currentFieldIndex = 0;
+        slideCheckItems = [];
+    }
+
+    // Admin Login Functionality
+    if (elements.adminIcon) {
+        elements.adminIcon.addEventListener('click', function() {
+            elements.adminLoginModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        });
+    }
+
+    if (elements.adminCloseBtn) {
+        elements.adminCloseBtn.addEventListener('click', function() {
+            closeAdminModal();
+        });
+    }
+
+    // Close admin modal when clicking outside
+    window.addEventListener('click', function(e) {
+        if (e.target === elements.adminLoginModal) {
+            closeAdminModal();
+        }
+    });
+
+    function closeAdminModal() {
+        elements.adminLoginModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        elements.adminErrorMessage.style.display = 'none';
+        elements.adminLoginForm.reset();
+    }
+
+    function showAdminError(message) {
+        elements.adminErrorMessage.textContent = message;
+        elements.adminErrorMessage.style.display = 'block';
+    }
+
+    // Admin login form submission
+    if (elements.adminLoginForm) {
+        elements.adminLoginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('adminUsername').value.trim();
+            const password = document.getElementById('adminPassword').value.trim();
+            
+            if (!username || !password) {
+                showAdminError('Please enter both username and password');
+                return;
+            }
+
+            // Disable button during login
+            elements.adminLoginBtn.disabled = true;
+            elements.adminLoginBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i>Authenticating...';
+
+            try {
+                const response = await fetch('http://localhost:3000/admin/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Successful login - open dashboard in new tab
+                    window.open('http://localhost:3000/admin/dashboard', '_blank');
+                    closeAdminModal();
+                } else {
+                    showAdminError(result.message || 'Access denied');
+                }
+
+            } catch (error) {
+                console.error('Login error:', error);
+                showAdminError('Connection error. Please try again.');
+            } finally {
+                // Re-enable button
+                elements.adminLoginBtn.disabled = false;
+                elements.adminLoginBtn.innerHTML = '<i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i>Access Dashboard';
+            }
+        });
+    }
+
+    // Hero Slider
+    let currentSlide = 0;
+    let slideInterval;
+
+    function showSlide(n) {
+        elements.slides.forEach(slide => slide.classList.remove('active'));
+        elements.dots.forEach(dot => dot.classList.remove('active'));
+        currentSlide = (n + elements.slides.length) % elements.slides.length;
+        elements.slides[currentSlide].classList.add('active');
+        elements.dots[currentSlide].classList.add('active');
+    }
+
+    function nextSlide() {
+        showSlide(currentSlide + 1);
+    }
+
+    function prevSlide() {
+        showSlide(currentSlide - 1);
+    }
+
+    function startSlider() {
+        clearInterval(slideInterval);
+        slideInterval = setInterval(nextSlide, 5000);
+    }
+
+    // Initialize slider
+    if (elements.prevBtn && elements.nextBtn) {
+        elements.prevBtn.addEventListener('click', () => {
+            prevSlide();
+            startSlider();
+        });
+        elements.nextBtn.addEventListener('click', () => {
+            nextSlide();
+            startSlider();
+        });
+    }
+
+    elements.dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            showSlide(index);
+            startSlider();
+        });
+    });
+
+    startSlider();
+
+    // Connect tournament button to football form
+    if (elements.tournamentBtn && elements.footballBtn) {
+        elements.tournamentBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            elements.footballBtn.click();
+        });
+    }
+
+    // Modal handling
+    function openModal(modal, formType) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        clearInterval(slideInterval); // Pause slider when modal is open
+        
+        // ✅ Initialize slide navigator for the form
+        setTimeout(() => initializeSlideNavigator(formType), 100);
+    }
+
+    function closeModal(modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        startSlider(); // Resume slider when modal is closed
+        
+        // ✅ Hide slide navigator
+        hideSlideNavigator();
+    }
+
+    if (elements.footballBtn) {
+        elements.footballBtn.addEventListener('click', () => openModal(elements.formModal, 'football'));
+    }
+
+    if (elements.medicalBtn) {
+        elements.medicalBtn.addEventListener('click', () => openModal(elements.medicalFormModal, 'medical'));
+    }
+
+    elements.closeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            closeModal(elements.formModal);
+            closeModal(elements.medicalFormModal);
+        });
+    });
+
+    window.addEventListener('click', function(e) {
+        if (e.target === elements.formModal) closeModal(elements.formModal);
+        if (e.target === elements.medicalFormModal) closeModal(elements.medicalFormModal);
+    });
+
+    // ✅ Enhanced form field tracking with slide checks
+    function setupFormFieldTracking() {
+        // Track all form inputs for completion
+        const allFormInputs = document.querySelectorAll('#registrationForm input, #registrationForm textarea, #medicalForm input, #medicalForm textarea');
+        
+        allFormInputs.forEach(input => {
+            // Check completion on input
+            input.addEventListener('input', () => checkFieldCompletion(input));
+            input.addEventListener('change', () => checkFieldCompletion(input));
+            
+            // Update current field on focus
+            input.addEventListener('focus', () => {
+                const formGroup = input.closest('.form-group[data-field]');
+                if (formGroup && currentFormFields.includes(formGroup)) {
+                    const index = currentFormFields.indexOf(formGroup);
+                    updateCurrentField(index);
+                }
+            });
+        });
+    }
+
+    // Initialize form field tracking
+    setupFormFieldTracking();
+
+    // Team autocomplete
+    const teams = [
+        "Al Ahly", "Al-Ittihad", "Al Masry", "Ceramica Cleopatra", "El Gouna", "ENPPI", 
+        "Ghazl El Mahalla", "Ismaily", "Haras", "Modern Future FC", "National Bank", 
+        "Petrojet", "Pharco FC", "Pyramids FC", "Smouha", "El Geish", "Zamalek", "ZED FC",
+        "Arsenal", "Aston Villa", "Blackburn Rovers", "Chelsea", "Coventry City", 
+        "Crystal Palace", "Everton", "Ipswich Town", "Leeds United", "Liverpool", 
+        "Manchester City", "Manchester United", "Middlesbrough", "Norwich City", 
+        "Nottingham Forest", "Oldham Athletic", "Queens Park Rangers", "Sheffield United", 
+        "Sheffield Wednesday","Newcastle", "Southampton", "Tottenham Hotspur", "Wimbledon",
+        "Alavés", "Athletic Bilbao", "Atlético Madrid", "Barcelona", "Celta Vigo", 
+        "Espanyol", "Getafe", "Girona", "Las Palmas", "Leganés", "Mallorca", "Osasuna", 
+        "Rayo Vallecano", "Real Betis", "Real Madrid", "Real Sociedad", "Real Valladolid", 
+        "Sevilla", "Valencia", "Villarreal",
+        "AC Milan", "Atalanta", "Bologna", "Cagliari", "Como 1907", "Empoli", "Fiorentina", 
+        "Genoa", "Hellas Verona", "Inter Milan", "Juventus", "Lazio", "Lecce", "Monza", 
+        "Napoli", "Parma", "Roma", "Torino", "Udinese", "Venezia",
+        "AJ Auxerre", "Angers", "Guingamp", "Le Havre AC", "Lens", "Lille", "Lyon", 
+        "Marseille", "Metz", "Monaco", "Montpellier", "Nantes", "Nice", "Paris SG", 
+        "Reims", "Rennes", "St. Etienne", "Stade Brestois 29", "Strasbourg", "Toulouse", 
+        "USL Dunkerque",
+        "FC Heidenheim", "FC Union Berlin", "1899 Hoffenheim", "Bayer 04 Leverkusen", 
+        "Bayern Munich", "Borussia Dortmund", "Borussia Mönchengladbach", "Eintracht Frankfurt", 
+        "FC Augsburg", "FC St Pauli", "Holstein Kiel", "Mainz 05", "RB Leipzig", "SC Freiburg", 
+        "VfB Stuttgart", "VfL Bochum", "VfL Wolfsburg", "Werder Bremen",
+        "Arouca", "AVS Futebol SAD", "Benfica", "Boavista", "Casa Pia", "Estoril Praia", 
+        "Estrela da Amadora", "Famalicão", "Farense", "FC Porto", "Gil Vicente", "Moreirense", 
+        "Nacional", "Rio Ave", "Santa Clara", "Sporting Braga", "Sporting CP", "Vitória Guimarães",
+        "Al Ahli El Saudi", "Al Ettifaq", "Al Fateh", "Al Fayha", "Al Hilal", "Al Ittihad", 
+        "Al Khaleej", "Al Kholood", "Al Nassr", "Al Okhdood", "Al Orobah", "Al Qadsiah", 
+        "Al Raed", "Al Riyadh", "Al Shabab", "Al Taawoun", "Al Wehda", "Damac",
+        "Algeria", "Angola", "Benin", "Botswana", "Burkina Faso", "Burundi", "Cameroon", 
+        "Cape Verde", "Central African Republic", "Chad", "Comoros", "Congo", "Djibouti", 
+        "DR Congo", "Egypt", "Equatorial Guinea", "Eritrea", "Eswatini", "Ethiopia", "Gabon", 
+        "Gambia", "Ghana", "Guinea", "Guinea-Bissau", "Ivory Coast", "Kenya", "Lesotho", 
+        "Liberia", "Libya", "Madagascar", "Malawi", "Mali", "Mauritania", "Mauritius", 
+        "Morocco", "Mozambique", "Namibia", "Niger", "Nigeria", "Rwanda", "Sao Tome and Principe", 
+        "Senegal", "Seychelles", "Sierra Leone", "Somalia", "South Africa", "South Sudan", 
+        "Sudan", "Tanzania", "Togo", "Tunisia", "Uganda", "Zambia", "Zimbabwe",
+        "Afghanistan", "Australia", "Bahrain", "Bangladesh", "Bhutan", "Brunei", "Cambodia", 
+        "China", "East Timor", "Guam", "Hong Kong", "India", "Indonesia", "Iran", "Iraq", 
+        "Japan", "Jordan", "Kuwait", "Kyrgyzstan", "Laos", "Lebanon", "Macau", "Malaysia", 
+        "Maldives", "Mongolia", "Myanmar", "Nepal", "North Korea", "Oman", "Pakistan", 
+        "Palestine", "Philippines", "Qatar", "Saudi Arabia", "Singapore", "South Korea", 
+        "Sri Lanka", "Syria", "Taiwan", "Tajikistan", "Thailand", "Turkmenistan", 
+        "United Arab Emirates", "Uzbekistan", "Vietnam", "Yemen",
+        "Albania", "Andorra", "Armenia", "Austria", "Azerbaijan", "Belarus", "Belgium", 
+        "Bosnia & Herzegovina", "Bulgaria", "Croatia", "Cyprus", "Czechia", "Denmark", 
+        "England", "Estonia", "Faroe Islands", "Finland", "France", "Georgia", "Germany", 
+        "Gibraltar", "Greece", "Hungary", "Iceland", "Ireland", "Israel", "Italy", 
+        "Kazakhstan", "Kosovo", "Latvia", "Liechtenstein", "Lithuania", "Luxembourg", 
+        "Malta", "Moldova", "Montenegro", "Netherlands", "North Macedonia", "Northern Ireland", 
+        "Norway", "Poland", "Portugal", "Romania", "Russia", "San Marino", "Scotland", 
+        "Serbia", "Slovakia", "Slovenia", "Spain", "Sweden", "Switzerland", "Turkey", 
+        "Ukraine", "Wales",
+        "Argentina", "Bolivia", "Brazil", "Chile", "Colombia", "Ecuador", "Paraguay", 
+        "Peru", "Uruguay", "Venezuela"
+    ];
+
+    if (elements.teamInput) {
+        let currentFocus;
+        
+        elements.teamInput.addEventListener("input", function(e) {
+            const val = this.value;
+            closeAllLists();
+            
+            if (!val) return false;
+            currentFocus = -1;
+            
+            const listContainer = document.createElement("DIV");
+            listContainer.setAttribute("id", this.id + "autocomplete-list");
+            listContainer.setAttribute("class", "autocomplete-items");
+            this.parentNode.appendChild(listContainer);
+            
+            let matchCount = 0;
+            for (let i = 0; i < teams.length; i++) {
+                if (teams[i].toLowerCase().includes(val.toLowerCase())) {
+                    if (matchCount >= 10) break;
+                    matchCount++;
+                    
+                    const item = document.createElement("DIV");
+                    const matchIndex = teams[i].toLowerCase().indexOf(val.toLowerCase());
+                    
+                    item.innerHTML = 
+                        teams[i].substr(0, matchIndex) +
+                        "<strong>" + teams[i].substr(matchIndex, val.length) + "</strong>" +
+                        teams[i].substr(matchIndex + val.length) +
+                        "<input type='hidden' value='" + teams[i] + "'>";
+                    
+                    item.addEventListener("click", function() {
+                        elements.teamInput.value = this.getElementsByTagName("input")[0].value;
+                        closeAllLists();
+                        // ✅ Check completion after selection
+                        checkFieldCompletion(elements.teamInput);
+                    });
+                    
+                    listContainer.appendChild(item);
+                }
+            }
+        });
+        
+        elements.teamInput.addEventListener("keydown", function(e) {
+            const list = document.getElementById(this.id + "autocomplete-list");
+            if (!list) return;
+            
+            const items = list.getElementsByTagName("div");
+            
+            if (e.key === "ArrowDown") {
+                currentFocus++;
+                addActive(items);
+            } else if (e.key === "ArrowUp") {
+                currentFocus--;
+                addActive(items);
+            } else if (e.key === "Enter") {
+                e.preventDefault();
+                if (currentFocus > -1 && items[currentFocus]) {
+                    items[currentFocus].click();
+                }
+            }
+        });
+        
+        function addActive(items) {
+            if (!items || !items.length) return false;
+            removeActive(items);
+            
+            currentFocus = (currentFocus >= items.length) ? 0 : 
+                        (currentFocus < 0) ? items.length - 1 : currentFocus;
+            
+            items[currentFocus].classList.add("autocomplete-active");
+            items[currentFocus].scrollIntoView({ block: 'nearest' });
+        }
+        
+        function removeActive(items) {
+            for (let i = 0; i < items.length; i++) {
+                items[i].classList.remove("autocomplete-active");
+            }
+        }
+        
+        function closeAllLists(elmnt) {
+            const lists = document.getElementsByClassName("autocomplete-items");
+            for (let i = 0; i < lists.length; i++) {
+                if (elmnt !== lists[i] && elmnt !== elements.teamInput) {
+                    lists[i].parentNode.removeChild(lists[i]);
+                }
+            }
+        }
+        
+        document.addEventListener("click", (e) => closeAllLists(e.target));
+    }
+
+    // Form submissions with improved validation
+    if (elements.registrationForm) {
+        elements.registrationForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                first_name: document.getElementById('first_name').value.trim(),
+                last_name: document.getElementById('last_name').value.trim(),
+                major: document.getElementById('major').value.trim(),
+                age: document.getElementById('age').value.trim(),
+                team: document.getElementById('team').value.trim(),
+                id: document.getElementById('id').value.trim()
+            };
+            
+            // Validate required fields
+            const emptyFields = Object.entries(formData)
+                .filter(([key, value]) => !value)
+                .map(([key]) => key.replace('_', ' '));
+            
+            if (emptyFields.length > 0) {
+                alert(`Please fill in all required fields: ${emptyFields.join(', ')}`);
+                return;
+            }
+            
+            if (isNaN(formData.age) || formData.age < 16 || formData.age > 60) {
+                alert('Please enter a valid age between 16 and 60');
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:3000/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
+                
+                showSuccessMessage(elements.successMessage, elements.successOverlay);
+                elements.registrationForm.reset();
+                closeModal(elements.formModal);
+                
+            } catch (error) {
+                console.error('Registration error:', error);
+                alert(`Registration failed: ${error.message}`);
+            }
+        });
+    }
+
+    if (elements.medicalForm) {
+    elements.medicalForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const requiredFields = [
+            'medicalName', 'medicalCollege', 
+            'medicalId', 'medicalPhone', 'signature'
+        ];
+
+        const emptyFields = requiredFields
+            .map(id => document.getElementById(id))
+            .filter(field => !field.value.trim())
+            .map(field => field.getAttribute('placeholder') || field.name);
+
+        if (emptyFields.length > 0) {
+            alert(`Please fill in all required fields: ${emptyFields.join(', ')}`);
+            return;
+        }
+
+        if (!document.getElementById('agreement').checked) {
+            alert('You must agree to the terms and conditions');
+            return;
+        }
+
+        // ✅ Helper function to parse yes/no with optional description
+        function parseYesNoWithDetails(input) {
+            if (!input) return { answer: false, description: null };
+            const lowered = input.toLowerCase();
+            if (lowered.startsWith("yes")) {
+                const desc = input.slice(3).trim().replace(/^,/, '').trim();
+                return { answer: true, description: desc || null };
+            }
+            return { answer: false, description: null };
+        }
+
+        const conditionParsed = parseYesNoWithDetails(document.getElementById('medicalConditions').value.trim());
+        const surgeryParsed = parseYesNoWithDetails(document.getElementById('previousSurgeries').value.trim());
+
+        const medicalData = {
+            full_name: document.getElementById('medicalName').value.trim(),
+            college: document.getElementById('medicalCollege').value.trim(),
+            id_number: document.getElementById('medicalId').value.trim(),
+            phone_number: document.getElementById('medicalPhone').value.trim(),
+            signature_name: document.getElementById('signature').value.trim(),
+            agreement_accepted: true,
+
+            has_conditions: conditionParsed.answer,
+            conditions_description: conditionParsed.description,
+
+            has_surgeries: surgeryParsed.answer,
+            surgeries_description: surgeryParsed.description,
+
+            has_diabetes: document.getElementById('diabetes').checked,
+            has_high_bp: document.getElementById('bloodPressure').checked,
+            has_heart_disease: document.getElementById('heartDisease').value.trim() !== '',
+            heart_disease_description: document.getElementById('heartDisease').value.trim(),
+
+            has_spinal_injuries: document.getElementById('spinalInjuries').checked,
+            is_smoker: document.getElementById('smoker').checked,
+
+            takes_medications: document.getElementById('medications').value.trim() !== '',
+            medications_list: document.getElementById('medications').value.trim(),
+
+            practices_sports: document.getElementById('sports').value.trim() !== '',
+            sports_description: document.getElementById('sports').value.trim()
+        };
+
+        try {
+            const response = await fetch('http://localhost:3000/submit-medical-form', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(medicalData)
+            });
+
+            if (!response.ok) {
+                throw new Error(await response.text());
+            }
+
+            showSuccessMessage(elements.medicalSuccessMessage, elements.medicalSuccessOverlay);
+            elements.medicalForm.reset();
+            closeModal(elements.medicalFormModal);
+
+        } catch (error) {
+            console.error('Medical form error:', error);
+            alert(`Medical form submission failed: ${error.message}`);
+        }
+    });
+}
+
+    // Helper function to show success messages
+    function showSuccessMessage(messageElement, overlayElement) {
+        messageElement.style.display = 'block';
+        overlayElement.style.display = 'block';
+        
+        setTimeout(() => {
+            messageElement.style.display = 'none';
+            overlayElement.style.display = 'none';
+        }, 3000);
+    }
+
+    // Statistics counter animation
+    if (elements.statNumbers) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounter(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        elements.statNumbers.forEach(stat => observer.observe(stat));
+
+        function animateCounter(el) {
+            const target = parseInt(el.getAttribute('data-count'));
+            const duration = 2000;
+            const step = target / (duration / 16);
+            let current = 0;
+            
+            const timer = setInterval(() => {
+                current += step;
+                if (current > target) {
+                    el.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    el.textContent = Math.floor(current);
+                }
+            }, 16);
+        }
+    }
+
+    // Dark Mode Toggle
+    if (elements.darkModeToggle) {
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-mode');
+            elements.darkModeToggle.checked = true;
+        }
+
+        elements.darkModeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('darkMode', 'disabled');
+            }
+        });
+    }
+
+    // Back to Top Button
+    if (elements.backToTop) {
+        window.addEventListener('scroll', function() {
+            elements.backToTop.classList.toggle('visible', window.pageYOffset > 300);
+        });
+
+        elements.backToTop.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
+    // ✅ Keyboard navigation for forms
+    document.addEventListener('keydown', function(e) {
+        if (elements.formSlideNavigator.classList.contains('active')) {
+            if (e.key === 'ArrowUp' && !elements.navUp.disabled) {
+                e.preventDefault();
+                navigateForm(-1);
+            } else if (e.key === 'ArrowDown' && !elements.navDown.disabled) {
+                e.preventDefault();
+                navigateForm(1);
+            }
+        }
+    });
+});
+</script>
+
+</body>
+</html>
